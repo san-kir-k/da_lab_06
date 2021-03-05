@@ -5,19 +5,6 @@
 #include "big_int.hpp"
 
 int main() {
-    /**
-     * +
-     * -
-     * *
-     * ^
-     * /
-     * > (true/false)
-     * <
-     * =
-     * Error: вычитание из меньшего большее, переполнение, деление на ноль, возведение нуля в нулевую
-     * Количество десятичных разрядов целых чисел не превышает 100000. 
-     * Основание выбранной системы счисления для внутреннего представления «длинных» чисел должно быть не меньше 10000.
-     */
     std::string firstOperand;
     std::string secondOperand;
     char op;
@@ -26,21 +13,33 @@ int main() {
         BigInt::BigInt secondNum(secondOperand);
 
         if (op == '+') {
-            // ...
+            std::cout << firstNum + secondNum << '\n'; 
         } else if (op == '-') {
-            // ...
+            try {
+                std::cout << firstNum - secondNum << '\n';
+            } catch (std::logic_error) {
+                std::cout << "Error\n";
+            }
         } else if (op == '*') {
-            // ...
+            std::cout << firstNum * secondNum << "\n";
         } else if (op == '^') {
-            // ...
+            try {
+                std::cout << BigInt::BigInt::FastPow(firstNum, secondNum) << '\n';
+            } catch (std::logic_error) {
+                std::cout << "Error\n";
+            }
         } else if (op == '/') {
-            // ...
+            try {
+                std::cout << BigInt::BigInt::FastPow(firstNum, secondNum) << '\n';
+            } catch (std::logic_error) {
+                std::cout << "Error\n";
+            }
         } else if (op == '>') {
-            // ...
+            std::cout << (firstNum > secondNum) << "\n";
         } else if (op == '<') {
-            // ...
+            std::cout << (firstNum < secondNum) << "\n";
         } else if (op == '=') {
-            // ...
+            std::cout << (firstNum == secondNum) << "\n";
         } else {
             std::cout << "Invalid operator!\n";
         }
