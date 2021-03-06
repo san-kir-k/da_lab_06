@@ -148,8 +148,21 @@ namespace BigInt {
 
     }
 
-    BigInt BigInt::FastPow(const BigInt& lhs, const BigInt& rhs) {
-
+    BigInt BigInt::FastPow(BigInt base, BigInt degree) {
+        BigInt null("0");
+        if (base == null && degree == null) {
+            throw std::logic_error("Uncertainty, 0^0.");
+        }
+        BigInt res("1");
+        BigInt two("2");
+        while (degree > null) {
+            if (degree.Data.back() % 2 == 1) {
+                res = res * base; 
+            }
+            base = base * base;
+            degree = degree / two;
+        }
+        return res;
     }
 
     void BigInt::BasePow(int degree) {
