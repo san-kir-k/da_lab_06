@@ -91,7 +91,29 @@ namespace BigInt {
     }
 
     BigInt operator+(const BigInt& lhs, const BigInt& rhs) {
+        const BigInt& smaller = (lhs.Data.size() < rhs.Data.size()) ? lhs : rhs;
+        const BigInt& bigger = (lhs.Data.size() >= rhs.Data.size()) ? lhs : rhs;
+        BigInt res = bigger;
+        int carry = 0;
 
+        for (int i = 0; i < smaller.Data.size(); ++i) {
+            res.Data[i] += (smaller.Data[i] + carry);
+            carry = res.Data[i] / BigInt::Base;
+            res.Data[i] %= BigInt::Base;
+        }
+
+        int i = smaller.Data.size();
+        while (carry != 0 && i < res.Data.size()) { 
+            res.Data[i] += carry;
+            carry = res.Data[i] / BigInt::Base;
+            res.Data[i] %= BigInt::Base;
+            i++;
+        }
+        if (carry != 0) {
+            res.Data.push_back(carry);
+        }
+
+        return res;  // 9999299939994999 999989998999
     }
 
     BigInt operator-(const BigInt& lhs, const BigInt& rhs) {
