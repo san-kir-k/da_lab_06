@@ -35,11 +35,13 @@ int main() {
                 std::cout << "Error\n";
             }
         } else if (op == '>') {
-            std::cout << (firstNum > secondNum) << "\n";
+            (firstNum > secondNum) ? std::cout << "true\n" : std::cout << "false\n";
         } else if (op == '<') {
-            std::cout << (firstNum < secondNum) << "\n";
+            (firstNum < secondNum) ? std::cout << "true\n" : std::cout << "false\n";;
         } else if (op == '=') {
-            std::cout << (firstNum == secondNum) << "\n";
+            (firstNum == secondNum) ? std::cout << "true\n" : std::cout << "false\n";;
+        } else if (op == '?') {
+            std::cout << firstNum << "\n" << secondNum << "\n";
         } else {
             std::cout << "Invalid operator!\n";
         }

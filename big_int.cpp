@@ -3,8 +3,13 @@
 namespace BigInt {
     BigInt::BigInt(const std::string& str) {
         int startPosition = 0; // убираем ведущие нули
-        while (str[startPosition] == '0') {
+        while (startPosition < str.size() && str[startPosition] == '0') {
             ++startPosition;
+        }
+
+        if (startPosition == str.size()) { // если только ноль
+            Data.push_back(0);
+            return;
         }
 
         for (int i = str.size() - 1; i >= startPosition; i -= Digits) {
@@ -78,8 +83,9 @@ namespace BigInt {
     }
 
     std::ostream& operator<<(std::ostream& os, const BigInt& num) {
-        for (int i = num.Data.size() - 1; i >= 0; --i) {
-            os << num.Data[i]; 
+        os << num.Data[num.Data.size() - 1];
+        for (int i = num.Data.size() - 2; i >= 0; --i) {
+            os << std::setfill('0') << std::setw(BigInt::Digits) << num.Data[i]; 
         }
         return os;
     }
