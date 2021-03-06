@@ -1,5 +1,106 @@
 #include "big_int.hpp"
 
 namespace BigInt {
+    BigInt::BigInt(const std::string& str) {
+        int startPosition = 0; // убираем ведущие нули
+        while (str[startPosition] == '0') {
+            ++startPosition;
+        }
 
+        for (int i = str.size() - 1; i >= startPosition; i -= Digits) {
+            int nextDigit = 0;
+            int j = Digits - 1;
+            while (j >= 0) {
+                if (i - j >= startPosition) {
+                    nextDigit = nextDigit * 10 + str[i - j] - '0';
+                }
+                --j;
+            }
+            Data.push_back(nextDigit);
+        }
+    }
+
+    BigInt::BigInt(const BigInt& num) {
+        for (int i = 0; i < num.Data.size(); ++i) {
+            Data.push_back(num.Data[i]);
+        }
+    }
+
+    BigInt& BigInt::operator=(const BigInt& num) {
+        Data.resize(num.Data.size());
+        for (int i = 0; i < num.Data.size(); ++i) {
+            Data[i] = num.Data[i];
+        }
+        return *this;
+    }
+
+    bool operator<(const BigInt& lhs, const BigInt& rhs) {
+        if (lhs.Data.size() != rhs.Data.size()) {
+            return lhs.Data.size() < rhs.Data.size();
+        }
+        for (int i = lhs.Data.size() - 1; i >= 0; --i) {
+            if (lhs.Data[i] != rhs.Data[i]) {
+                return lhs.Data[i] < rhs.Data[i];
+            }
+        }
+        return false; // lhs == rhs
+    }
+
+    bool operator>(const BigInt& lhs, const BigInt& rhs) {
+        if (lhs.Data.size() != rhs.Data.size()) {
+            return lhs.Data.size() > rhs.Data.size();
+        }
+        for (int i = lhs.Data.size() - 1; i >= 0; --i) {
+            if (lhs.Data[i] != rhs.Data[i]) {
+                return lhs.Data[i] > rhs.Data[i];
+            }
+        }
+        return false; // lhs == rhs
+    }
+
+    bool operator==(const BigInt& lhs, const BigInt& rhs) {
+        if (lhs.Data.size() != rhs.Data.size()) {
+            return false; // lhs != rhs
+        }
+        for (int i = lhs.Data.size() - 1; i >= 0; --i) {
+            if (lhs.Data[i] != rhs.Data[i]) {
+                return false; // lhs != rhs
+            }
+        }
+        return true; // lhs == rhs
+    }
+
+    std::istream& operator>>(std::istream& is, BigInt& num) {
+        std::string str;
+        is >> str;
+        num = BigInt(str);
+        return is;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const BigInt& num) {
+        for (int i = num.Data.size() - 1; i >= 0; --i) {
+            os << num.Data[i]; 
+        }
+        return os;
+    }
+
+    BigInt operator+(const BigInt& lhs, const BigInt& rhs) {
+
+    }
+
+    BigInt operator-(const BigInt& lhs, const BigInt& rhs) {
+
+    }
+
+    BigInt operator*(const BigInt& lhs, const BigInt& rhs) {
+
+    }
+
+    BigInt operator/(const BigInt& lhs, const BigInt& rhs) {
+
+    }
+
+    BigInt BigInt::FastPow(const BigInt& lhs, const BigInt& rhs) {
+
+    }
 };
