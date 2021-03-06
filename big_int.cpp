@@ -129,8 +129,11 @@ namespace BigInt {
             }
         }
 
-        if (res.Data[res.Data.size() - 1] == 0 && res.Data.size() > 1) {
+        // второе условие чтобы 0 оставить, если числа равны
+        int i = res.Data.size() - 1;
+        while (res.Data[i] == 0 && res.Data.size() > 1) {
             res.Data.pop_back();
+            i = res.Data.size() - 1;
         }
         return res;
     }
