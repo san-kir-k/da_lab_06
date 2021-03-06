@@ -91,33 +91,48 @@ namespace BigInt {
     }
 
     BigInt operator+(const BigInt& lhs, const BigInt& rhs) {
+        // больше или меньше по размеру вектора, а не по значению
         const BigInt& smaller = (lhs.Data.size() < rhs.Data.size()) ? lhs : rhs;
         const BigInt& bigger = (lhs.Data.size() >= rhs.Data.size()) ? lhs : rhs;
         BigInt res = bigger;
         int carry = 0;
 
-        for (int i = 0; i < smaller.Data.size(); ++i) {
-            res.Data[i] += (smaller.Data[i] + carry);
+        for (int i = 0; i < res.Data.size(); ++i) {
+            int added = (i < smaller.Data.size()) ? smaller.Data[i] + carry : carry;
+            res.Data[i] += added;
             carry = res.Data[i] / BigInt::Base;
             res.Data[i] %= BigInt::Base;
         }
 
-        int i = smaller.Data.size();
-        while (carry != 0 && i < res.Data.size()) { 
-            res.Data[i] += carry;
-            carry = res.Data[i] / BigInt::Base;
-            res.Data[i] %= BigInt::Base;
-            i++;
-        }
         if (carry != 0) {
             res.Data.push_back(carry);
         }
 
-        return res;  // 9999299939994999 999989998999
+        return res;
     }
 
     BigInt operator-(const BigInt& lhs, const BigInt& rhs) {
+        if (lhs < rhs) {
+            throw std::logic_error("Subtract the larger from the smaller.");
+        }
 
+        BigInt res = lhs;
+        int carry = 0;
+        for (int i = 0; i < res.Data.size(); ++i) {
+            int subtrahend = (i < rhs.Data.size()) ? carry + rhs.Data[i] : carry;
+            res.Data[i] -= subtrahend;
+            if (res.Data[i] < 0) {
+                carry = 1;
+                res.Data[i] += BigInt::Base;
+            } else {
+                carry = 0;
+            }
+        }
+
+        if (res.Data[res.Data.size() - 1] == 0 && res.Data.size() > 1) {
+            res.Data.pop_back();
+        }
+        return res;
     }
 
     BigInt operator*(const BigInt& lhs, const BigInt& rhs) {
