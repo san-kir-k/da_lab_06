@@ -139,7 +139,9 @@ namespace BigInt {
     }
 
     BigInt operator*(const BigInt& lhs, const BigInt& rhs) {
-
+        BigInt tmpRhs = rhs;
+        BigInt tmpLhs = lhs;
+        return BigInt::KaratsubaMult(tmpLhs, tmpRhs);
     }
 
     BigInt operator/(const BigInt& lhs, const BigInt& rhs) {
@@ -148,5 +150,87 @@ namespace BigInt {
 
     BigInt BigInt::FastPow(const BigInt& lhs, const BigInt& rhs) {
 
+    }
+
+    void BigInt::BasePow(int degree) {
+        if (Data.size() == 1 && Data[0] == 0) {
+            return;
+        }
+        int oldEnd = Data.size() - 1;
+        Data.resize(Data.size() + degree);
+        for (int i = oldEnd; i >= 0; --i) {
+            Data[i + degree] = Data[i];
+        }
+        for (int i = 0; i < degree; ++i) {
+            Data[i] = 0;
+        }
+    }
+
+    void BigInt::Split(const BigInt& num, BigInt& lhs, BigInt& rhs) {
+        int half = num.Data.size() / 2;
+        lhs.Data.resize(half);
+        rhs.Data.resize(half);
+        for (int i = 0; i < lhs.Data.size(); ++i) {
+            lhs.Data[i] = num.Data[i];
+            rhs.Data[i] = num.Data[i + half];
+        }
+    }
+
+    BigInt BigInt::KaratsubaMult(BigInt& lhs, BigInt& rhs) {
+        // дополняем числа до одного размера, и чтобы размер делился на 2
+        int len = std::max(lhs.Data.size(), rhs.Data.size());
+        if (len == 1) {
+            BigInt res = lhs;
+            res.Data[0] *= rhs.Data[0];
+            if (res.Data[0] > Base) {
+                int carry = res.Data[0] / Base;
+                res.Data[0] %= Base;
+                res.Data.push_back(carry);
+            }
+            return res;
+        }
+        len = (len % 2 != 0) ? len + 1 : len;
+
+        for (int i = lhs.Data.size(); i < len; ++i) {
+            lhs.Data.push_back(0);
+        }
+        for (int i = rhs.Data.size(); i < len; ++i) {
+            rhs.Data.push_back(0);
+        }
+
+        BigInt firstTermLHS;
+        BigInt secondTermLHS;
+        Split(lhs, firstTermLHS, secondTermLHS);
+
+        BigInt firstTermRHS;
+        BigInt secondTermRHS;
+        Split(rhs, firstTermRHS, secondTermRHS);
+
+        BigInt resFirstTerm = KaratsubaMult(firstTermLHS, firstTermRHS);
+        resFirstTerm.BasePow(len);
+
+        BigInt resSecondTerm1 = firstTermLHS + secondTermLHS;
+        BigInt resSecondTerm2 = firstTermRHS + secondTermRHS;
+        BigInt resSecondTerm = KaratsubaMult(resSecondTerm1, resSecondTerm2);
+
+        BigInt resThirdTerm = KaratsubaMult(secondTermLHS, secondTermRHS);
+
+        resSecondTerm = resSecondTerm - resFirstTerm - resThirdTerm;
+        resSecondTerm.BasePow(len / 2);
+
+        BigInt res = resFirstTerm + resSecondTerm + resThirdTerm;
+
+        int carry = 0;
+        for (int i = 0; i < res.Data.size(); ++i) {
+            res.Data[i] += carry;
+            carry = res.Data[i] / BigInt::Base;
+            res.Data[i] %= BigInt::Base;
+        }
+
+        if (carry != 0) {
+            res.Data.push_back(carry);
+        }
+
+        return res;
     }
 };
