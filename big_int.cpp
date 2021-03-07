@@ -1,7 +1,7 @@
 #include "big_int.hpp"
 
-namespace BigInt {
-    BigInt::BigInt(const std::string& str) {
+namespace NBigInt {
+    TBigInt::TBigInt(const std::string& str) {
         int startPosition = 0; // убираем ведущие нули
         while (startPosition < str.size() && str[startPosition] == '0') {
             ++startPosition;
@@ -25,13 +25,13 @@ namespace BigInt {
         }
     }
 
-    BigInt::BigInt(const BigInt& num) {
+    TBigInt::TBigInt(const TBigInt& num) {
         for (int i = 0; i < num.Data.size(); ++i) {
             Data.push_back(num.Data[i]);
         }
     }
 
-    BigInt& BigInt::operator=(const BigInt& num) {
+    TBigInt& TBigInt::operator=(const TBigInt& num) {
         Data.resize(num.Data.size());
         for (int i = 0; i < num.Data.size(); ++i) {
             Data[i] = num.Data[i];
@@ -39,7 +39,7 @@ namespace BigInt {
         return *this;
     }
 
-    bool operator<(const BigInt& lhs, const BigInt& rhs) {
+    bool operator<(const TBigInt& lhs, const TBigInt& rhs) {
         if (lhs.Data.size() != rhs.Data.size()) {
             return lhs.Data.size() < rhs.Data.size();
         }
@@ -51,7 +51,7 @@ namespace BigInt {
         return false; // lhs == rhs
     }
 
-    bool operator>(const BigInt& lhs, const BigInt& rhs) {
+    bool operator>(const TBigInt& lhs, const TBigInt& rhs) {
         if (lhs.Data.size() != rhs.Data.size()) {
             return lhs.Data.size() > rhs.Data.size();
         }
@@ -63,7 +63,7 @@ namespace BigInt {
         return false; // lhs == rhs
     }
 
-    bool operator==(const BigInt& lhs, const BigInt& rhs) {
+    bool operator==(const TBigInt& lhs, const TBigInt& rhs) {
         if (lhs.Data.size() != rhs.Data.size()) {
             return false; // lhs != rhs
         }
@@ -75,33 +75,33 @@ namespace BigInt {
         return true; // lhs == rhs
     }
 
-    std::istream& operator>>(std::istream& is, BigInt& num) {
+    std::istream& operator>>(std::istream& is, TBigInt& num) {
         std::string str;
         is >> str;
-        num = BigInt(str);
+        num = TBigInt(str);
         return is;
     }
 
-    std::ostream& operator<<(std::ostream& os, const BigInt& num) {
+    std::ostream& operator<<(std::ostream& os, const TBigInt& num) {
         os << num.Data[num.Data.size() - 1];
         for (int i = num.Data.size() - 2; i >= 0; --i) {
-            os << std::setfill('0') << std::setw(BigInt::Digits) << num.Data[i]; 
+            os << std::setfill('0') << std::setw(TBigInt::Digits) << num.Data[i]; 
         }
         return os;
     }
 
-    BigInt operator+(const BigInt& lhs, const BigInt& rhs) {
+    TBigInt operator+(const TBigInt& lhs, const TBigInt& rhs) {
         // больше или меньше по размеру вектора, а не по значению
-        const BigInt& smaller = (lhs.Data.size() < rhs.Data.size()) ? lhs : rhs;
-        const BigInt& bigger = (lhs.Data.size() >= rhs.Data.size()) ? lhs : rhs;
-        BigInt res = bigger;
+        const TBigInt& smaller = (lhs.Data.size() < rhs.Data.size()) ? lhs : rhs;
+        const TBigInt& bigger = (lhs.Data.size() >= rhs.Data.size()) ? lhs : rhs;
+        TBigInt res = bigger;
         int carry = 0;
 
         for (int i = 0; i < res.Data.size(); ++i) {
             int added = (i < smaller.Data.size()) ? smaller.Data[i] + carry : carry;
             res.Data[i] += added;
-            carry = res.Data[i] / BigInt::Base;
-            res.Data[i] %= BigInt::Base;
+            carry = res.Data[i] / TBigInt::Base;
+            res.Data[i] %= TBigInt::Base;
         }
 
         if (carry != 0) {
@@ -111,19 +111,19 @@ namespace BigInt {
         return res;
     }
 
-    BigInt operator-(const BigInt& lhs, const BigInt& rhs) {
+    TBigInt operator-(const TBigInt& lhs, const TBigInt& rhs) {
         if (lhs < rhs) {
             throw std::logic_error("Subtract the larger from the smaller.");
         }
 
-        BigInt res = lhs;
+        TBigInt res = lhs;
         int carry = 0;
         for (int i = 0; i < res.Data.size(); ++i) {
             int subtrahend = (i < rhs.Data.size()) ? carry + rhs.Data[i] : carry;
             res.Data[i] -= subtrahend;
             if (res.Data[i] < 0) {
                 carry = 1;
-                res.Data[i] += BigInt::Base;
+                res.Data[i] += TBigInt::Base;
             } else {
                 carry = 0;
             }
@@ -138,14 +138,14 @@ namespace BigInt {
         return res;
     }
 
-    BigInt operator*(const BigInt& lhs, const BigInt& rhs) {
-        BigInt tmpRhs = rhs;
-        BigInt tmpLhs = lhs;
-        return BigInt::KaratsubaMult(tmpLhs, tmpRhs);
+    TBigInt operator*(const TBigInt& lhs, const TBigInt& rhs) {
+        TBigInt tmpRhs = rhs;
+        TBigInt tmpLhs = lhs;
+        return TBigInt::KaratsubaMult(tmpLhs, tmpRhs);
     }
 
-    BigInt BigInt::WeakDivision(const BigInt& num, int div) {
-        BigInt res(num);
+    TBigInt TBigInt::WeakDivision(const TBigInt& num, int div) {
+        TBigInt res(num);
         int carry = 0;
         int j;
         if (res.Data[res.Data.size() - 1] < div) {
@@ -162,8 +162,8 @@ namespace BigInt {
         return res;
     }
 
-    BigInt BigInt::WeakMultiply(const BigInt& num, int mul) {
-        BigInt res;
+    TBigInt TBigInt::WeakMultiply(const TBigInt& num, int mul) {
+        TBigInt res;
         int carry = 0;
         for (int i = 0; i < num.Data.size(); ++i) {
             res.Data.push_back(num.Data[i] * mul % Base + carry);
@@ -175,10 +175,10 @@ namespace BigInt {
         return res;
     }
 
-    int BigInt::FindBin(const BigInt& num, const BigInt& div) {
+    int TBigInt::FindBin(const TBigInt& num, const TBigInt& div) {
         int down = 0;
         int up = Base;
-        BigInt tmpRes;
+        TBigInt tmpRes;
         while (up - 1 > down) {
             int mid = (up + down) / 2;
             tmpRes = WeakMultiply(div, mid);
@@ -193,26 +193,25 @@ namespace BigInt {
         return (down + up) / 2;
     }
 
-    BigInt operator/(const BigInt& lhs, const BigInt& rhs) {
+    TBigInt operator/(const TBigInt& lhs, const TBigInt& rhs) {
         if (rhs.Data.size() == 1 && rhs.Data[0] == 0) {
             throw std::logic_error("Division by zero.");
         }
 
-        BigInt res;
+        TBigInt res;
         int shift = lhs.Data.size() - rhs.Data.size();
-        BigInt tmpRHS;
-        BigInt tmpLHS;
-        BigInt remainder = lhs;
+        TBigInt tmpRHS;
+        TBigInt tmpLHS;
+        TBigInt remainder = lhs;
         for (int i = shift; i >= 0; --i) {
             tmpRHS = rhs;
             tmpLHS = remainder;
-            tmpRHS.BasePow(i);
-            int quotient = BigInt::FindBin(tmpLHS, tmpRHS);
+            tmpRHS.LeftShift(i);
+            int quotient = TBigInt::FindBin(tmpLHS, tmpRHS);
             res.Data.push_back(quotient);
-            if (!(tmpLHS < BigInt::WeakMultiply(tmpRHS, quotient))) {
-                remainder = tmpLHS - BigInt::WeakMultiply(tmpRHS, quotient);
+            if (!(tmpLHS < TBigInt::WeakMultiply(tmpRHS, quotient))) {
+                remainder = tmpLHS - TBigInt::WeakMultiply(tmpRHS, quotient);
             }
-            // std::cout << "???: " << tmpLHS << " " << tmpRHS << " " << quotient << " " << remainder << "\n";
         }
         std::reverse(res.Data.begin(), res.Data.end());
 
@@ -225,25 +224,23 @@ namespace BigInt {
         return res;
     }
 
-    BigInt BigInt::FastPow(BigInt base, BigInt degree) {
-        BigInt null("0");
+    TBigInt TBigInt::FastPow(TBigInt base, TBigInt degree) {
+        TBigInt null("0");
         if (base == null && degree == null) {
             throw std::logic_error("Uncertainty, 0^0.");
         }
-        BigInt res("1");
-        // BigInt two("2");
+        TBigInt res("1");
         while (degree > null) {
             if (degree.Data.back() % 2 == 1) {
                 res = res * base; 
             }
             base = base * base;
             degree = WeakDivision(degree, 2);;
-            // std::cout << "\nBase: " << base << "\nDegree: " << degree << "\nRes: " << res << "\n";
         }
         return res;
     }
 
-    void BigInt::BasePow(int degree) { // переименоватьб а то нихуя не ясно
+    void TBigInt::LeftShift(int degree) { 
         if (Data.size() == 1 && Data[0] == 0) {
             return;
         }
@@ -257,7 +254,7 @@ namespace BigInt {
         }
     }
 
-    void BigInt::Split(const BigInt& num, BigInt& lhs, BigInt& rhs) {
+    void TBigInt::Split(const TBigInt& num, TBigInt& lhs, TBigInt& rhs) {
         int half = num.Data.size() / 2;
         lhs.Data.resize(half);
         rhs.Data.resize(half);
@@ -267,11 +264,11 @@ namespace BigInt {
         }
     }
 
-    BigInt BigInt::KaratsubaMult(BigInt& lhs, BigInt& rhs) {
+    TBigInt TBigInt::KaratsubaMult(TBigInt& lhs, TBigInt& rhs) {
         // дополняем числа до одного размера, и чтобы размер делился на 2
         int len = std::max(lhs.Data.size(), rhs.Data.size());
         if (len == 1) {
-            BigInt res = lhs;
+            TBigInt res = lhs;
             res.Data[0] *= rhs.Data[0];
             if (res.Data[0] > Base) {
                 int carry = res.Data[0] / Base;
@@ -289,39 +286,34 @@ namespace BigInt {
             rhs.Data.push_back(0);
         }
 
-        BigInt firstTermLHS;
-        BigInt secondTermLHS;
+        TBigInt firstTermLHS;
+        TBigInt secondTermLHS;
         Split(lhs, firstTermLHS, secondTermLHS);
 
-        BigInt firstTermRHS;
-        BigInt secondTermRHS;
+        TBigInt firstTermRHS;
+        TBigInt secondTermRHS;
         Split(rhs, firstTermRHS, secondTermRHS);
 
-        // std::cout << "Split??: " << firstTermLHS << " " << secondTermLHS << "\n" <<
-        // firstTermRHS << " " << secondTermRHS << "\n";
+        TBigInt resFirstTerm = KaratsubaMult(firstTermLHS, firstTermRHS);
 
-        BigInt resFirstTerm = KaratsubaMult(firstTermLHS, firstTermRHS);
+        TBigInt resSecondTerm1 = firstTermLHS + secondTermLHS;
+        TBigInt resSecondTerm2 = firstTermRHS + secondTermRHS;
+        TBigInt resSecondTerm = KaratsubaMult(resSecondTerm1, resSecondTerm2);
 
-        BigInt resSecondTerm1 = firstTermLHS + secondTermLHS;
-        BigInt resSecondTerm2 = firstTermRHS + secondTermRHS;
-        BigInt resSecondTerm = KaratsubaMult(resSecondTerm1, resSecondTerm2);
-
-        BigInt resThirdTerm = KaratsubaMult(secondTermLHS, secondTermRHS);
+        TBigInt resThirdTerm = KaratsubaMult(secondTermLHS, secondTermRHS);
 
         resSecondTerm = resSecondTerm - resFirstTerm - resThirdTerm;
 
-        // std::cout << "??: " << resFirstTerm << " " << resSecondTerm << " " << resThirdTerm << "\n"; 
+        resFirstTerm.LeftShift(len);
+        resSecondTerm.LeftShift(len / 2);
 
-        resFirstTerm.BasePow(len);
-        resSecondTerm.BasePow(len / 2);
-
-        BigInt res = resFirstTerm + resSecondTerm + resThirdTerm;
+        TBigInt res = resFirstTerm + resSecondTerm + resThirdTerm;
 
         int carry = 0;
         for (int i = 0; i < res.Data.size(); ++i) {
             res.Data[i] += carry;
-            carry = res.Data[i] / BigInt::Base;
-            res.Data[i] %= BigInt::Base;
+            carry = res.Data[i] / TBigInt::Base;
+            res.Data[i] %= TBigInt::Base;
         }
 
         if (carry != 0) {

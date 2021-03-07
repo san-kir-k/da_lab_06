@@ -5,46 +5,41 @@
 #include <iomanip>
 #include <algorithm>
 
-/**
- * Error: вычитание из меньшего большее, переполнение, деление на ноль, возведение нуля в нулевую
- * Количество десятичных разрядов целых чисел не превышает 100000. 
- * Основание выбранной системы счисления для внутреннего представления «длинных» чисел должно быть не меньше 10000.
- */
-
-namespace BigInt {
+namespace NBigInt {
     const int DefaultBase = 1e4;
 
-    class BigInt {
+    class TBigInt {
     private:
         std::vector<int> Data;
         static const int Base = DefaultBase;
         static const int Digits = 4;
 
-        static void Split(const BigInt& num, BigInt& lhs, BigInt& rhs);
-        static int FindBin(const BigInt& num, const BigInt& div);
+        void LeftShift(int degree);
+        static void Split(const TBigInt& num, TBigInt& lhs, TBigInt& rhs);
+        static int FindBin(const TBigInt& num, const TBigInt& div);
+
     public:
-        BigInt() = default;
-        BigInt(const std::string& str);
-        BigInt(const BigInt& num);
-        BigInt& operator=(const BigInt& num);
-        ~BigInt() = default;
+        TBigInt() = default;
+        TBigInt(const std::string& str);
+        TBigInt(const TBigInt& num);
+        TBigInt& operator=(const TBigInt& num);
+        ~TBigInt() = default;
 
-        friend bool operator<(const BigInt& lhs, const BigInt& rhs);
-        friend bool operator>(const BigInt& lhs, const BigInt& rhs);
-        friend bool operator==(const BigInt& lhs, const BigInt& rhs);
+        friend bool operator<(const TBigInt& lhs, const TBigInt& rhs);
+        friend bool operator>(const TBigInt& lhs, const TBigInt& rhs);
+        friend bool operator==(const TBigInt& lhs, const TBigInt& rhs);
 
-        friend std::istream& operator>>(std::istream& is, BigInt& num);
-        friend std::ostream& operator<<(std::ostream& os, const BigInt& num);
+        friend std::istream& operator>>(std::istream& is, TBigInt& num);
+        friend std::ostream& operator<<(std::ostream& os, const TBigInt& num);
 
-        friend BigInt operator+(const BigInt& lhs, const BigInt& rhs);
-        friend BigInt operator-(const BigInt& lhs, const BigInt& rhs);
-        friend BigInt operator*(const BigInt& lhs, const BigInt& rhs);
-        friend BigInt operator/(const BigInt& lhs, const BigInt& rhs); // exception
+        friend TBigInt operator+(const TBigInt& lhs, const TBigInt& rhs);
+        friend TBigInt operator-(const TBigInt& lhs, const TBigInt& rhs);
+        friend TBigInt operator*(const TBigInt& lhs, const TBigInt& rhs);
+        friend TBigInt operator/(const TBigInt& lhs, const TBigInt& rhs);
 
-        void BasePow(int degree);
-        static BigInt FastPow(BigInt base, BigInt degree);
-        static BigInt KaratsubaMult(BigInt& lhs, BigInt& rhs);
-        static BigInt WeakDivision(const BigInt& num, int div);
-        static BigInt WeakMultiply(const BigInt& num, int mul);
+        static TBigInt FastPow(TBigInt base, TBigInt degree);
+        static TBigInt KaratsubaMult(TBigInt& lhs, TBigInt& rhs);
+        static TBigInt WeakDivision(const TBigInt& num, int div);
+        static TBigInt WeakMultiply(const TBigInt& num, int mul);
     };
 };
