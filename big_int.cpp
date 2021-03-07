@@ -144,8 +144,26 @@ namespace BigInt {
         return BigInt::KaratsubaMult(tmpLhs, tmpRhs);
     }
 
-    BigInt operator/(const BigInt& lhs, const BigInt& rhs) {
+    BigInt BigInt::WeakDivision(const BigInt& num, int div) {
+        BigInt res(num);
+        int carry = 0;
+        int j;
+        if (res.Data[res.Data.size() - 1] < div) {
+            j = res.Data.size() - 2;
+            carry = res.Data[res.Data.size() - 1];
+            res.Data.pop_back();
+        } else {
+            j = res.Data.size() - 1;
+        }
+        for (int i = j; i >= 0; --i) {
+            res.Data[i] = (carry * Base + num.Data[i]) / div;
+            carry = num.Data[i] % div;
+        }
+        return res;
+    }
 
+    BigInt operator/(const BigInt& lhs, const BigInt& rhs) {
+        // нужно деление длинного на короткое + основной алгос + сдвиг + поиск делителя
     }
 
     BigInt BigInt::FastPow(BigInt base, BigInt degree) {
@@ -154,18 +172,19 @@ namespace BigInt {
             throw std::logic_error("Uncertainty, 0^0.");
         }
         BigInt res("1");
-        BigInt two("2");
+        // BigInt two("2");
         while (degree > null) {
             if (degree.Data.back() % 2 == 1) {
                 res = res * base; 
             }
             base = base * base;
-            degree = degree / two;
+            degree = WeakDivision(degree, 2);;
+            // std::cout << "\nBase: " << base << "\nDegree: " << degree << "\nRes: " << res << "\n";
         }
         return res;
     }
 
-    void BigInt::BasePow(int degree) {
+    void BigInt::BasePow(int degree) { // переименоватьб а то нихуя не ясно
         if (Data.size() == 1 && Data[0] == 0) {
             return;
         }
@@ -184,8 +203,8 @@ namespace BigInt {
         lhs.Data.resize(half);
         rhs.Data.resize(half);
         for (int i = 0; i < lhs.Data.size(); ++i) {
-            lhs.Data[i] = num.Data[i];
-            rhs.Data[i] = num.Data[i + half];
+            lhs.Data[i] = num.Data[i + half];
+            rhs.Data[i] = num.Data[i];
         }
     }
 
@@ -219,8 +238,10 @@ namespace BigInt {
         BigInt secondTermRHS;
         Split(rhs, firstTermRHS, secondTermRHS);
 
+        // std::cout << "Split??: " << firstTermLHS << " " << secondTermLHS << "\n" <<
+        // firstTermRHS << " " << secondTermRHS << "\n";
+
         BigInt resFirstTerm = KaratsubaMult(firstTermLHS, firstTermRHS);
-        resFirstTerm.BasePow(len);
 
         BigInt resSecondTerm1 = firstTermLHS + secondTermLHS;
         BigInt resSecondTerm2 = firstTermRHS + secondTermRHS;
@@ -229,6 +250,10 @@ namespace BigInt {
         BigInt resThirdTerm = KaratsubaMult(secondTermLHS, secondTermRHS);
 
         resSecondTerm = resSecondTerm - resFirstTerm - resThirdTerm;
+
+        // std::cout << "??: " << resFirstTerm << " " << resSecondTerm << " " << resThirdTerm << "\n"; 
+
+        resFirstTerm.BasePow(len);
         resSecondTerm.BasePow(len / 2);
 
         BigInt res = resFirstTerm + resSecondTerm + resThirdTerm;
