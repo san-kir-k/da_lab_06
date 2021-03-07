@@ -5,6 +5,7 @@
 #include "big_int.hpp"
 
 int main() {
+    // cin tie
     std::string firstOperand;
     std::string secondOperand;
     char op;
@@ -30,7 +31,7 @@ int main() {
             }
         } else if (op == '/') {
             try {
-                std::cout << BigInt::BigInt::FastPow(firstNum, secondNum) << '\n';
+                std::cout << firstNum / secondNum << '\n';
             } catch (std::logic_error) {
                 std::cout << "Error\n";
             }
@@ -40,8 +41,8 @@ int main() {
             (firstNum < secondNum) ? std::cout << "true\n" : std::cout << "false\n";;
         } else if (op == '=') {
             (firstNum == secondNum) ? std::cout << "true\n" : std::cout << "false\n";;
-        } else if (op == '?') {
-            std::cout << firstNum << "\n" << secondNum << "\n";
+        } else if (op == '?') { // <--УБРАТЬ , чекнуть вик дивижн и возведение в степен
+            std::cout << BigInt::BigInt::WeakMultiply(firstNum, 9999) << "\n" << secondNum << "\n";
         } else {
             std::cout << "Invalid operator!\n";
         }

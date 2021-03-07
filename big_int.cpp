@@ -162,8 +162,67 @@ namespace BigInt {
         return res;
     }
 
+    BigInt BigInt::WeakMultiply(const BigInt& num, int mul) {
+        BigInt res;
+        int carry = 0;
+        for (int i = 0; i < num.Data.size(); ++i) {
+            res.Data.push_back(num.Data[i] * mul % Base + carry);
+            carry = num.Data[i] * mul / Base;
+        }
+        if (carry != 0) {
+            res.Data.push_back(carry);
+        }
+        return res;
+    }
+
+    int BigInt::FindBin(const BigInt& num, const BigInt& div) {
+        int down = 0;
+        int up = Base;
+        BigInt tmpRes;
+        while (up - 1 > down) {
+            int mid = (up + down) / 2;
+            tmpRes = WeakMultiply(div, mid);
+            if (num > tmpRes) {
+                down = mid;
+            } else if (num < tmpRes) {
+                up = mid;
+            } else {
+                return mid;
+            }
+        }
+        return (down + up) / 2;
+    }
+
     BigInt operator/(const BigInt& lhs, const BigInt& rhs) {
-        // нужно деление длинного на короткое + основной алгос + сдвиг + поиск делителя
+        if (rhs.Data.size() == 1 && rhs.Data[0] == 0) {
+            throw std::logic_error("Division by zero.");
+        }
+
+        BigInt res;
+        int shift = lhs.Data.size() - rhs.Data.size();
+        BigInt tmpRHS;
+        BigInt tmpLHS;
+        BigInt remainder = lhs;
+        for (int i = shift; i >= 0; --i) {
+            tmpRHS = rhs;
+            tmpLHS = remainder;
+            tmpRHS.BasePow(i);
+            int quotient = BigInt::FindBin(tmpLHS, tmpRHS);
+            res.Data.push_back(quotient);
+            if (!(tmpLHS < BigInt::WeakMultiply(tmpRHS, quotient))) {
+                remainder = tmpLHS - BigInt::WeakMultiply(tmpRHS, quotient);
+            }
+            // std::cout << "???: " << tmpLHS << " " << tmpRHS << " " << quotient << " " << remainder << "\n";
+        }
+        std::reverse(res.Data.begin(), res.Data.end());
+
+        int i = res.Data.size() - 1;
+        while (res.Data[i] == 0 && res.Data.size() > 1) {
+            res.Data.pop_back();
+            i = res.Data.size() - 1;
+        }
+
+        return res;
     }
 
     BigInt BigInt::FastPow(BigInt base, BigInt degree) {

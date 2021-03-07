@@ -3,6 +3,7 @@
 #include <exception>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 
 /**
  * Error: вычитание из меньшего большее, переполнение, деление на ноль, возведение нуля в нулевую
@@ -18,6 +19,9 @@ namespace BigInt {
         std::vector<int> Data;
         static const int Base = DefaultBase;
         static const int Digits = 4;
+
+        static void Split(const BigInt& num, BigInt& lhs, BigInt& rhs);
+        static int FindBin(const BigInt& num, const BigInt& div);
     public:
         BigInt() = default;
         BigInt(const std::string& str);
@@ -33,11 +37,14 @@ namespace BigInt {
         friend std::ostream& operator<<(std::ostream& os, const BigInt& num);
 
         friend BigInt operator+(const BigInt& lhs, const BigInt& rhs);
-        friend BigInt operator-(const BigInt& lhs, const BigInt& rhs); // exception
+        friend BigInt operator-(const BigInt& lhs, const BigInt& rhs);
         friend BigInt operator*(const BigInt& lhs, const BigInt& rhs);
         friend BigInt operator/(const BigInt& lhs, const BigInt& rhs); // exception
 
-        static BigInt FastPow(const BigInt& lhs, const BigInt& rhs); // exception
-        // + karatsuba + fdiv
+        void BasePow(int degree);
+        static BigInt FastPow(BigInt base, BigInt degree);
+        static BigInt KaratsubaMult(BigInt& lhs, BigInt& rhs);
+        static BigInt WeakDivision(const BigInt& num, int div);
+        static BigInt WeakMultiply(const BigInt& num, int mul);
     };
 };
