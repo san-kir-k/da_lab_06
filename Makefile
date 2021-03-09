@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -O2 -Wextra -Wall -Wno-sign-compare -pedantic
-NAME = solution
+CXXFLAGS = -std=c++17 -O3 -Wextra -Wall -Wno-sign-compare -pedantic
+NAME = lab6
 
 all: big_int.o
 	$(CXX) $(CXXFLAGS) big_int.o main.cpp -o $(NAME)

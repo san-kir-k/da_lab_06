@@ -6,17 +6,18 @@
 #include <algorithm>
 
 namespace NBigInt {
-    const int DefaultBase = 1e4;
+    const long long DefaultBase = 1e6;
 
     class TBigInt {
     private:
-        std::vector<int> Data;
-        static const int Base = DefaultBase;
-        static const int Digits = 4;
+        std::vector<long long> Data;
+        static const long long Base = DefaultBase;
+        static const long long Digits = 6;
 
-        void LeftShift(int degree);
+        void LeftShift(long long degree);
         static void Split(const TBigInt& num, TBigInt& lhs, TBigInt& rhs);
-        static int FindBin(const TBigInt& num, const TBigInt& div);
+        static long long FindBin(const TBigInt& num, const TBigInt& div);
+        void RemoveNulls();
 
     public:
         TBigInt() = default;
@@ -38,8 +39,8 @@ namespace NBigInt {
         friend TBigInt operator/(const TBigInt& lhs, const TBigInt& rhs);
 
         static TBigInt FastPow(TBigInt base, TBigInt degree);
-        static TBigInt KaratsubaMult(TBigInt& lhs, TBigInt& rhs);
-        static TBigInt WeakDivision(const TBigInt& num, int div);
-        static TBigInt WeakMultiply(const TBigInt& num, int mul);
+        static TBigInt KaratsubaMult(TBigInt&& lhs, TBigInt&& rhs);
+        static TBigInt WeakDivision(const TBigInt& num, long long div);
+        static TBigInt WeakMultiply(const TBigInt& num, long long mul);
     };
 };
