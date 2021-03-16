@@ -1,0 +1,56 @@
+100 
+
+TBigInt		101us
+GMP		    7us
+TBigInt		109us
+GMP		    8us
+TBigInt		756us
+GMP		    12us
+TBigInt		12us
+GMP		    14us
+TBigInt		8us
+GMP		    10us
+TBigInt		16160us
+GMP		    5us
+TBigInt		2728us
+GMP		    9us
+
+====================
+
+1000
+
+TBigInt		1088us
+GMP		    66us
+TBigInt		773us
+GMP		    40us
+TBigInt		2364us
+GMP		    67us
+TBigInt		83us
+GMP		    92us
+TBigInt		120us
+GMP		    171us
+TBigInt		268659us
+GMP		    99us
+TBigInt		30511us
+GMP		    87us
+
+==================
+
+10000
+
+TBigInt		10283us
+GMP		    695us
+TBigInt		13311us
+GMP		    488us
+TBigInt		28069us
+GMP		    756us
+TBigInt		843us
+GMP		    957us
+TBigInt		786us
+GMP		    808us
+TBigInt		1582502us
+GMP		    660us
+TBigInt		258197us
+GMP		    760us
+
+==================
